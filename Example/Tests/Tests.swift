@@ -6,44 +6,27 @@ import BlockOperation
 
 class TableOfContentsSpec: QuickSpec {
     override func spec() {
-        describe("these will fail") {
-
-            it("can do maths") {
-                expect(1) == 2
+        
+        let operationQueue = NSOperationQueue()
+        var blockOperation: BlockOperation!
+        var value = 0
+        
+        describe("BlockOperation") {
+            beforeEach {
+                operationQueue.maxConcurrentOperationCount = 1
+                blockOperation = BlockOperation(block: { blockOperation in
+                    value = 1
+                    blockOperation.finish()
+                })
             }
 
-            it("can read") {
-                expect("number") == "string"
-            }
-
-            it("will eventually fail") {
-                expect("time").toEventually( equal("done") )
+            afterEach {
+                value = 0
             }
             
-            context("these will pass") {
-
-                it("can do maths") {
-                    expect(23) == 23
-                }
-
-                it("can read") {
-                    expect("🐮") == "🐮"
-                }
-
-                it("will eventually pass") {
-                    var time = "passing"
-
-                    dispatch_async(dispatch_get_main_queue()) {
-                        time = "done"
-                    }
-
-                    waitUntil { done in
-                        NSThread.sleepForTimeInterval(0.5)
-                        expect(time) == "done"
-
-                        done()
-                    }
-                }
+            it("should run the block immediately") {
+                operationQueue.addOperation(blockOperation)
+                expect(value).toEventually(equal(1))
             }
         }
     }

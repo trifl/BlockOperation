@@ -1,0 +1,6 @@
+framework module BlockOperation {
+  umbrella header "BlockOperation-umbrella.h"
+
+  export *
+  module * { export * }
+}
